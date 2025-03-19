@@ -60,6 +60,6 @@ footballhub-api/
 
 ### Matheus Pereira - [GitHub](https://github.com/mathzpereira)
 
-### Davi Rosa -
+### Davi Rosa - [GitHub](https://github.com/DaviRGomes)  
 
 ### Enzo Couto -
