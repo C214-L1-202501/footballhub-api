@@ -4,7 +4,7 @@ Backend do projeto FootballHub referente à disciplina C214
 
 ## Sobre o Projeto
 
-Este projeto implementa um sistema de chat (quiz) cliente-servidor, desenvolvido como parte da disciplina C115 - Conceitos e Tecnologias para Dispositivos Conectados. A aplicação permite comunicação em tempo real através de uma interface web.
+Este projeto consiste em uma aplicação web que disponibiliza diversas informações sobre o futebol mundial, desenvolvida como parte da disciplina C214 - Engenharia de Software.
 
 ## Tecnologias Utilizadas
 
@@ -60,6 +60,6 @@ footballhub-api/
 
 ### Matheus Pereira - [GitHub](https://github.com/mathzpereira)
 
-### Davi Rosa - [GitHub](https://github.com/DaviRGomes)  
+### Davi Rosa - [GitHub](https://github.com/DaviRGomes)
 
 ### Enzo Couto -
