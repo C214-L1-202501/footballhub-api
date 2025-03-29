@@ -3,7 +3,7 @@ from app.schemas.match import Match, Substitution
 
 class TestMatch:
 
-    def test_validate_different_teams__happy_path__expected_True():
+    def test_validate_different_teams__happy_path__expected_True(self):
         # Fixture
         home_team_id = 185
         away_team_id = 12
@@ -14,7 +14,7 @@ class TestMatch:
         # Assert
         assert result is True
 
-    def test_validate_different_teams__same_team__expected_error():
+    def test_validate_different_teams__same_team__expected_error(self):
         # Fixture
         home_team_id = 18
         away_team_id = 18
@@ -24,7 +24,7 @@ class TestMatch:
             Match.Config.validate_different_teams(home_team_id, away_team_id)
         assert str(exc_info.value) == "home_team_id and away_team_id must be different"
 
-    def test_validate_different_players__happy_path__expected_True():
+    def test_validate_different_players__happy_path__expected_True(self):
         # Fixture
         player_out_id = 1100
         player_in_id = 152

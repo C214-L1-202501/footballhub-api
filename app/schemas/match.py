@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import UniqueConstraint
 
 from app.schemas.championship import Championship
 from app.schemas.player import Player
@@ -101,7 +102,7 @@ class Lineup(SQLModel, table=True):
     player: Optional["Player"] = Relationship(back_populates="lineups")
 
     # Constraint: unique(match_id, team_id, player_id)
-    __table_args__ = ({"sqlite_unique": ["match_id", "team_id", "player_id"]},)
+    __table_args__ = (UniqueConstraint("match_id", "team_id", "player_id"),)
 
 Match.lineups = Relationship(back_populates="match", sa_relationship_kwargs={"lazy": "selectin"})
 Team.lineups = Relationship(back_populates="team", sa_relationship_kwargs={"lazy": "selectin"})

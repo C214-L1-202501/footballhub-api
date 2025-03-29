@@ -1,9 +1,11 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.schemas.country import Country
-from app.schemas.team import Team
+
+if TYPE_CHECKING:
+    from app.schemas.team import Team
 
 class Player(SQLModel, table=True):
     """Player object."""

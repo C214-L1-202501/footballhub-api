@@ -1,10 +1,13 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import UniqueConstraint
 
 from app.schemas.championship import Championship
 from app.schemas.country import Country
-from app.schemas.player import Player
+
+if TYPE_CHECKING:
+    from app.schemas.player import Player
 
 class Team(SQLModel, table=True):
     """Team object."""
@@ -35,7 +38,7 @@ class ChampionshipParticipation(SQLModel, table=True):
     team: Optional["Team"] = Relationship(back_populates="participations")
 
     # Constraint: unique(championship_id, team_id, season)
-    __table_args__ = ({"sqlite_unique": ["championship_id", "team_id", "season"]},)
+    __table_args__ = (UniqueConstraint("championship_id", "team_id", "season"),)
 
 Championship.participations = Relationship(back_populates="championship", sa_relationship_kwargs={"lazy": "selectin"})
 Team.participations = Relationship(back_populates="team", sa_relationship_kwargs={"lazy": "selectin"})
