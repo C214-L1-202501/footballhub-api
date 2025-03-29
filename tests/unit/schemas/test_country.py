@@ -49,11 +49,13 @@ class TestCountry:
 
     def test_get_country_by_name__non_existing_country__expected_none(self):
         # Fixture
-        repository = CountryRepository()
+        mock_repository = Mock(spec=CountryRepository)
         country_name = "NonExistentCountry"
+        mock_repository.get_by_name.return_value = None
 
         # Exercise
-        retrieved_country = repository.get_by_name(country_name)
+        retrieved_country = mock_repository.get_by_name(country_name)
 
         # Assert
         assert retrieved_country is None
+        mock_repository.get_by_name.assert_called_once_with(country_name)
