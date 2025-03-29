@@ -1,6 +1,7 @@
-"""import pytest
+import pytest
 from app.repositories.countryRepository import CountryRepository
 from app.schemas.country import Country
+from unittest.mock import Mock
 
 
 class TestCountry:
@@ -33,18 +34,18 @@ class TestCountry:
 
     def test_get_country_by_name__existing_country__expected_country(self):
         # Fixture
-        repository = CountryRepository()
+        mock_repository = Mock(spec=CountryRepository)
         country_name = "Brasil"
-        
-        # Pre-create the country
-        country = repository.create(country_name)
+        country = Country(name=country_name)
+        mock_repository.get_by_name.return_value = country
 
         # Exercise
-        retrieved_country = repository.get_by_name(country_name)
+        retrieved_country = mock_repository.get_by_name(country_name)
 
         # Assert
         assert retrieved_country is not None
         assert retrieved_country.name == country_name
+        mock_repository.get_by_name.assert_called_once_with(country_name)
 
     def test_get_country_by_name__non_existing_country__expected_none(self):
         # Fixture
@@ -56,4 +57,3 @@ class TestCountry:
 
         # Assert
         assert retrieved_country is None
-"""
