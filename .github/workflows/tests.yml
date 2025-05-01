@@ -1,25 +1,46 @@
 name: FootballHub API Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, feature/*]
+  pull_request:
+    branches: [main]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
+    
     steps:
+      # 1. Baixar o código
       - uses: actions/checkout@v4
-      
-      - name: Set up Python
+
+      # 2. Configurar Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          
+          cache: 'pip'
+
+      # 3. Instalar dependências
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
-          
-      - name: Install package in development mode
-        run: pip install -e .
-          
-      - name: Run tests
-        run: pytest tests/ --cov=app
+
+      # 4. Rodar testes (solução PYTHONPATH)
+      - name: Run unit tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}  # Fix para "No module named 'app'"
+        run: |
+          pytest tests/unit/ \
+            --cov=app \
+            --cov-report=xml:coverage.xml \
+            -v
+
+      # 5. Salvar relatório de cobertura
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-coverage
+          path: coverage.xml
