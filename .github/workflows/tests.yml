@@ -2,12 +2,12 @@ name: FootballHub API Tests
 
 on:
   push:
-    branches: ["main"]  
+    branches: [main, feature/*]
   pull_request:
-    branches: ["main"]  
+    branches: [main]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
     
     services:
@@ -19,38 +19,35 @@ jobs:
           POSTGRES_DB: test_db
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Python
+
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          
+          cache: 'pip'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov psycopg2-binary
-          
-      - name: Run tests
+          pip install pytest pytest-cov
+
+      - name: Run unit tests
         env:
           PYTHONPATH: ${{ github.workspace }}
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test_db"
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
         run: |
-          pytest tests/ \
+          pytest tests/unit/ \
             --cov=app \
             --cov-report=xml:coverage.xml \
             -v
-            
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: unit-test-coverage
           path: coverage.xml
