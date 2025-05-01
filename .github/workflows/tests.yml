@@ -1,10 +1,6 @@
 name: FootballHub API Tests
 
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -20,7 +16,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest pytest-cov
+          
+      - name: Install package in development mode
+        run: pip install -e .
           
       - name: Run tests
-        run: pytest tests/
+        run: pytest tests/ --cov=app
