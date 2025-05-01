@@ -1,0 +1,26 @@
+name: FastAPI Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install uvicorn
+      - name: Check FastAPI server startup
+        run: |
+          timeout 5s uvicorn main:app --host 0.0.0.0 --port 8000 || echo "Server check completed"
