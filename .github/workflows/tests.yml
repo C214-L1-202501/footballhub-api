@@ -28,19 +28,19 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      # 4. Rodar testes (solução PYTHONPATH)
+      # 4. Rodar testes
       - name: Run unit tests
         env:
-          PYTHONPATH: ${{ github.workspace }}  # Fix para "No module named 'app'"
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           pytest tests/unit/ \
             --cov=app \
             --cov-report=xml:coverage.xml \
             -v
 
-      # 5. Salvar relatório de cobertura
+      # 5. Salvar relatório (versão corrigida)
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Versão atualizada
         with:
           name: unit-test-coverage
           path: coverage.xml
