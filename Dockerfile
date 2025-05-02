@@ -11,6 +11,8 @@ FROM python:${PYTHON_VERSION}-slim AS base
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV DATABASE_PASS=PamFdFfFYsS8ZlkQ
+ENV DATABASE_URL=postgresql://postgres.dkwtlnrghvdylifogxpz:PamFdFfFYsS8ZlkQ@aws-0-sa-east-1.pooler.supabase.com:5432/postgres
 
 # Keeps Python from buffering stdout and stderr to avoid situations where
 # the application crashes without emitting any logs due to buffering.
