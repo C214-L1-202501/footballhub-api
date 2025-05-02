@@ -34,4 +34,17 @@ jobs:
       - name: Run tests with pytest
         run: pytest
 
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Compose Up with Build
+        run: |
+          docker-compose up --build -d
+
     
