@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field, Relationship
 
-from app.schemas.country import Country
+
 
 
 class Championship(SQLModel, table=True):
@@ -14,4 +14,4 @@ class Championship(SQLModel, table=True):
     type: Optional[str] = Field(max_length=50, default=None)
     season: Optional[str] = Field(max_length=20, default=None)
 
-    country: Optional[Country] = Relationship(back_populates="championships")
+    country: Optional["Country"] = Relationship(back_populates="championships")
