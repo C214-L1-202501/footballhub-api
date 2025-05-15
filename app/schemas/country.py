@@ -1,5 +1,6 @@
-from typing import Optional
-from sqlmodel import SQLModel, Field
+from typing import List,Optional
+from sqlmodel import SQLModel, Field, Relationship
+from app.schemas.championship import Championship
 
 class Country(SQLModel, table=True):
     '''Country object.'''
@@ -7,3 +8,4 @@ class Country(SQLModel, table=True):
     
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(max_length=100, unique=True, nullable=False)
+    championships: List[Championship] = Relationship(back_populates="country")

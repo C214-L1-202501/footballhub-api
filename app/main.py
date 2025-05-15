@@ -1,4 +1,5 @@
 from app.routes.routes_country import router as country
+from app.routes.routes_championship import router as championship
 import uvicorn
 
 from fastapi import FastAPI
@@ -6,6 +7,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 app.include_router(country)
+app.include_router(championship)
 
 
 @app.get("/")
