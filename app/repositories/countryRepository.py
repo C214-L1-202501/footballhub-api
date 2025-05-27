@@ -4,6 +4,9 @@ import os
 from dotenv import load_dotenv
 
 from app.schemas.country import Country
+from app.schemas.stadium import Stadium
+from app.schemas.player import Player
+from app.schemas.team import Team
 
 
 class CountryRepository:
@@ -69,3 +72,23 @@ class CountryRepository:
                 session.commit()
                 return True
             return False
+    def get_teams(self, country_id: int) -> List[Team]:
+        """Retorna todos os times de um país."""
+        with self._get_session() as session:
+            statement = select(Team).where(Team.country_id == country_id)
+            teams = session.exec(statement).all()
+            return teams
+
+    def get_players(self, country_id: int) -> List[Player]:
+        """Retorna todos os jogadores de um país."""
+        with self._get_session() as session:
+            statement = select(Player).where(Player.country_id == country_id)
+            players = session.exec(statement).all()
+            return players
+
+    def get_stadiums(self, country_id: int) -> List[Stadium]:
+        """Retorna todos os estádios de um país."""
+        with self._get_session() as session:
+            statement = select(Stadium).where(Stadium.country_id == country_id)
+            stadiums = session.exec(statement).all()
+            return stadiums

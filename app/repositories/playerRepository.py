@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 from app.schemas.player import Player
+from app.schemas.player import Position
 
 
 class PlayerRepository:
@@ -20,7 +21,7 @@ class PlayerRepository:
     def _get_session(self) -> Session:
         return Session(self.engine)
 
-    def create(self, name: str, birth_date: Optional[datetime], country_id: int, position_id: int, team_id: Optional[int] = None) -> Player:
+    def create(self, name: str, birth_date: Optional[datetime], country_id: int, position_id: int, team_id: Optional[int] = None) -> List[Player]:
         """Create a new player in the database."""
         with self._get_session() as session:
             player = Player(
@@ -85,3 +86,14 @@ class PlayerRepository:
                 session.commit()
                 return True
             return False
+    
+    def create_positions(self, names: List[str]) -> List[Position]:
+        """Cria várias posições de uma vez."""
+        with self._get_session() as session:
+            positions = [Position(name=name) for name in names]
+            session.add_all(positions)
+            session.commit()
+            # Atualiza cada objeto para garantir que tenham os IDs gerados
+            for position in positions:
+                session.refresh(position)
+            return positions
