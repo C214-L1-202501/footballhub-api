@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 
 from app.schemas.team import Team
+from app.schemas.player import Player
 
 
 class TeamRepository:
@@ -79,3 +80,10 @@ class TeamRepository:
                 session.commit()
                 return True
             return False
+        
+    def get_players(self, team_id: int) -> List[Player]:
+        """Retorna todos os jogadores de um time."""
+        with self._get_session() as session:
+            statement = select(Player).where(Player.team_id == team_id)
+            players = session.exec(statement).all()
+            return players

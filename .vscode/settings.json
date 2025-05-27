@@ -3,5 +3,18 @@
     "tests"
   ],
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "C:/Users/davig/Documents/DAVI GAMEPLA/Codes/Piton/footballhub-api"
+  },
+  "python.envFile": "${workspaceFolder}/.env",
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "name": "Futebol",
+      "connectString": "postgresql://postgres.oewnagkceueiegjqiavr:WHknrBnJqvOyrMSx@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+    }
+  ]
 }
