@@ -1,9 +1,9 @@
 from typing import List, Optional
 from datetime import datetime
-from sqlmodel import SQLModel
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from app.schemas.team import Team
+from app.schemas.team import ChampionshipParticipation
+from app.schemas.championship import Championship
 from app.schemas.player import Player
 from app.repositories.teamRepository import TeamRepository
 
@@ -108,3 +108,67 @@ class TeamService:
         Propaga SQLAlchemyError para o router tratar.
         """
         return self.repository.get_players(team_id)
+    
+    def create_championship_participation(
+        self,
+        championship_id: int,
+        team_id: int,
+        season: Optional[str] = None
+    ) -> ChampionshipParticipation:
+        """
+        Cria uma nova participação de time em campeonato.
+        Lança ValueError para erros de validação.
+        Propaga IntegrityError e SQLAlchemyError para o router tratar.
+        """
+        # Validação básica
+        if not isinstance(championship_id, int) or championship_id < 1:
+            raise ValueError("ID do campeonato inválido")
+        if not isinstance(team_id, int) or team_id < 1:
+            raise ValueError("ID do time inválido")
+        if season and len(season) > 20:
+            raise ValueError("A temporada deve ter no máximo 20 caracteres")
+
+        return self.repository.create_championshipParticipation(
+            championship_id=championship_id,
+            team_id=team_id,
+            season=season
+        )
+
+    def delete_championship_participation(self, participation_id: int) -> bool:
+        """
+        Remove uma participação de time em campeonato.
+        Retorna True se deletou, False se não encontrou.
+        Propaga SQLAlchemyError para o router tratar.
+        """
+        if not isinstance(participation_id, int) or participation_id < 1:
+            raise ValueError("ID de participação inválido")
+        return self.repository.delete_championshipParticipation(participation_id)
+    
+
+
+    def get_participations_by_team(self, team_id: int):
+        with self.repository._get_session() as session:
+            from sqlmodel import select
+            stmt = (
+                select(
+                    ChampionshipParticipation.id,
+                    ChampionshipParticipation.championship_id,
+                    Championship.name.label("championship_name"),
+                    ChampionshipParticipation.team_id,
+                    ChampionshipParticipation.season
+                )
+                .join(Championship, Championship.id == ChampionshipParticipation.championship_id)
+                .where(ChampionshipParticipation.team_id == team_id)
+            )
+            results = session.exec(stmt).all()
+            participations = [
+                {
+                    "id": row.id,
+                    "championship_id": row.championship_id,
+                    "championship_name": row.championship_name,
+                    "team_id": row.team_id,
+                    "season": row.season,
+                }
+                for row in results
+            ]
+            return participations
