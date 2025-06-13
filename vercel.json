@@ -1,5 +1,6 @@
 {
   "version": 2,
   "builds": [{ "src": "/api/main.py", "use": "@vercel/python" }],
-  "routes": [{ "src": "/(.*)", "dest": "api/main.py" }]
+  "routes": [{ "src": "/(.*)", "dest": "api/main.py" }],
+  "buildCommand": "cp -r app api && pip install -r requirements.txt"
 }
