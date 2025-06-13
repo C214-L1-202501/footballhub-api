@@ -1,68 +1,55 @@
-from typing import List, Optional
-from app.repositories.countryRepository import CountryRepository
+from typing import List
 from app.schemas.country import Country
-from app.schemas.team import Team
-from app.schemas.player import Player
 from app.schemas.stadium import Stadium
+from app.schemas.player import Player
+from app.schemas.team import Team
+from app.repositories.countryRepository import CountryRepository
+
 
 class CountryService:
-    def __init__(self, country_repository: CountryRepository = None):
-        self.repository = country_repository if country_repository else CountryRepository()
+    def __init__(self):
+        self.repository = CountryRepository()
 
-    def find_country_by_id(self, country_id: int) -> Optional[Country]:
-        return self.repository.get_by_id(country_id)
+    def find_country_by_id(self, country_id: int) -> Country:
+        """Find a country by its ID."""
+        try:
+            country = self.repository.get_by_id(country_id)
+        except Exception as e:
+            raise e
+        return country
 
     def create_country(self, name: str) -> Country:
-        if not name:
-            raise ValueError("Country name cannot be empty.")
-        if not isinstance(name, str):
-            raise ValueError("Country name must be a string.")
-        if len(name) > 100:
-            raise ValueError("Country name cannot exceed 100 characters.")
-        
-        existing_country = self.repository.get_by_name(name)
-        if existing_country:
-            raise ValueError("Country with this name already exists.")
-            
-        return self.repository.create(name)
+        """Create a new country."""
+        country = self.repository.create(name)
+        return country
 
     def get_all_countries(self) -> List[Country]:
+        """Retrieve all countries from the database."""
         return self.repository.get_all()
 
-    def update_country(self, country_id: int, name: str) -> Optional[Country]:
-        country = self.repository.get_by_id(country_id)
+    def update_country(self, country_id: int, name: str) -> Country:
+        """Update a country's name."""
+        country = self.repository.update(country_id, name)
         if not country:
-            raise ValueError("País não encontrado.")
-        
-        if not name:
-            raise ValueError("Country name cannot be empty.")
-        if not isinstance(name, str):
-            raise ValueError("Country name must be a string.")
-        if len(name) > 100:
-            raise ValueError("Country name cannot exceed 100 characters.")
-
-        return self.repository.update(country_id, name)
+            raise Exception("País não encontrado.")
+        country.name = name
+        return country
 
     def delete_country(self, country_id: int) -> bool:
+        """Delete a country by its ID."""
         country = self.repository.get_by_id(country_id)
         if not country:
-            raise ValueError("País não encontrado.")
+            raise Exception("País não encontrado.")
         return self.repository.delete(country_id)
-
+    
     def get_teams_by_country(self, country_id: int) -> List[Team]:
-        country = self.repository.get_by_id(country_id)
-        if not country:
-            raise ValueError("País não encontrado.")
+        """Retorna todos os times de um país."""
         return self.repository.get_teams(country_id)
 
     def get_players_by_country(self, country_id: int) -> List[Player]:
-        country = self.repository.get_by_id(country_id)
-        if not country:
-            raise ValueError("País não encontrado.")
+        """Retorna todos os jogadores de um país."""
         return self.repository.get_players(country_id)
 
     def get_stadiums_by_country(self, country_id: int) -> List[Stadium]:
-        country = self.repository.get_by_id(country_id)
-        if not country:
-            raise ValueError("País não encontrado.")
+        """Retorna todos os estádios de um país."""
         return self.repository.get_stadiums(country_id)

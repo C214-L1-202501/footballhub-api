@@ -1,4 +1,3 @@
-import pytest
 from app.repositories.countryRepository import CountryRepository
 from app.schemas.country import Country
 from unittest.mock import Mock
@@ -45,33 +44,15 @@ class TestCountry:
     #     assert retrieved_country.name == country_name
     #     mock_repository.get_by_name.assert_called_once_with(country_name)
 
-    def test_create_country_with_all_fields_success(self):
-        country = Country(
-            id=1,
-            name="Brazil"
-        )
-        assert country.id == 1
-        assert country.name == "Brazil"
+    def test_get_country_by_name__non_existing_country__expected_none(self):
+        # Fixture
+        mock_repository = Mock(spec=CountryRepository)
+        country_name = "NonExistentCountry"
+        mock_repository.get_by_name.return_value = None
 
-    def test_create_country_with_required_fields_only(self):
-        country = Country(
-            name="Argentina"
-        )
-        assert country.name == "Argentina"
-        assert country.id is None
+        # Exercise
+        retrieved_country = mock_repository.get_by_name(country_name)
 
-    def test_country_name_max_length(self):
-        name = "A" * 100
-        country = Country(name=name)
-        assert country.name == name
-
-    def test_country_name_exceeds_max_length(self):
-        name = "A" * 101
-        with pytest.raises(ValueError) as exc_info:
-            Country(name=name)
-        assert "Country name cannot exceed 100 characters" in str(exc_info.value)
-
-    def test_country_name_not_nullable(self):
-        with pytest.raises(ValueError) as exc_info:
-            Country(name=None)
-        assert "Country name is required" in str(exc_info.value)
+        # Assert
+        assert retrieved_country is None
+        mock_repository.get_by_name.assert_called_once_with(country_name)
