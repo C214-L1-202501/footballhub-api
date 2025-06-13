@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
+from app.schemas.country import Country
 from app.schemas.player import Player
 from app.schemas.player import Position
 
@@ -21,7 +22,14 @@ class PlayerRepository:
     def _get_session(self) -> Session:
         return Session(self.engine)
 
-    def create(self, name: str, birth_date: Optional[datetime], country_id: int, position_id: int, team_id: Optional[int] = None) -> List[Player]:
+    def create(
+        self,
+        name: str,
+        birth_date: Optional[datetime],
+        country_id: int,
+        position_id: int,
+        team_id: Optional[int] = None,
+    ) -> List[Player]:
         """Create a new player in the database."""
         with self._get_session() as session:
             player = Player(
@@ -29,7 +37,7 @@ class PlayerRepository:
                 birth_date=birth_date,
                 country_id=country_id,
                 position_id=position_id,
-                team_id=team_id
+                team_id=team_id,
             )
             session.add(player)
             session.commit()
@@ -56,7 +64,15 @@ class PlayerRepository:
             players = session.exec(statement).all()
             return players
 
-    def update(self, player_id: int, name: Optional[str] = None, birth_date: Optional[datetime] = None, country_id: Optional[int] = None, position_id: Optional[int] = None, team_id: Optional[int] = None) -> Optional[Player]:
+    def update(
+        self,
+        player_id: int,
+        name: Optional[str] = None,
+        birth_date: Optional[datetime] = None,
+        country_id: Optional[int] = None,
+        position_id: Optional[int] = None,
+        team_id: Optional[int] = None,
+    ) -> Optional[Player]:
         """Update an existing player's information."""
         with self._get_session() as session:
             player = session.get(Player, player_id)
@@ -86,7 +102,7 @@ class PlayerRepository:
                 session.commit()
                 return True
             return False
-    
+
     def create_positions(self, names: List[str]) -> List[Position]:
         """Cria várias posições de uma vez."""
         with self._get_session() as session:
@@ -97,3 +113,24 @@ class PlayerRepository:
             for position in positions:
                 session.refresh(position)
             return positions
+
+    def get_position_by_player_id(self, player_id: int) -> Optional[Position]:
+        """Obtém a posição de um jogador pelo ID do jogador."""
+        with self._get_session() as session:
+            statement = select(Position).join(Player).where(Player.id == player_id)
+            position = session.exec(statement).first()
+            return position
+
+    def get_team_by_player_id(self, player_id: int) -> Optional[Player]:
+        """Obtém o time de um jogador pelo ID do jogador."""
+        with self._get_session() as session:
+            statement = select(Player).where(Player.id == player_id)
+            player = session.exec(statement).first()
+            return player.team if player else None
+
+    def get_country_by_player_id(self, player_id: int) -> Optional[Country]:
+        """Obtém o país de um jogador pelo ID do jogador."""
+        with self._get_session() as session:
+            statement = select(Country).join(Player).where(Player.id == player_id)
+            country = session.exec(statement).first()
+            return country
