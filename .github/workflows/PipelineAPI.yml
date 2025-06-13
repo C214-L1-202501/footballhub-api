@@ -1,0 +1,42 @@
+name: FastAPI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  fastapi-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest httpx  # httpx para testar endpoints
+        
+    - name: Run tests
+      run: pytest
+    
+    - name: Test server startup
+      run: |
+        # Inicia o servidor em background
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+        SERVER_PID=$!
+        
+        # Espera o servidor iniciar
+        sleep 3
+        
+        # Testa o endpoint básico
+        curl -s http://localhost:8000 | grep "Hello" || exit 1
+        
+        # Encerra o servidor
+        kill $SERVER_PID
